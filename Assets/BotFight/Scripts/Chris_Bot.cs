@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Chris_Bot : BotController {
+public class Chris_Bot : MonoBehaviour {
 
 	private BotController m_bot;
 	private bool canStartBot = false;
@@ -10,6 +10,7 @@ public class Chris_Bot : BotController {
 	void Start () {
 	
 		m_bot = GetComponent<BotController>();
+		m_bot.botDebug = true;
 
 	}
 	
@@ -25,15 +26,48 @@ public class Chris_Bot : BotController {
 	}
 
 	private void startMoving()
-	{
-		m_bot.Action_RunRight();
-		Invoke("stopPlayer", 0.3f);
+	{	
+		int _rand = Random.Range(0, 1);
+
+		if(_rand == 0)
+		{
+			MoveRight();
+			Invoke("stopBot", 0.5f);
+			Invoke("Jump", 0.6f);
+			Invoke("MoveRight", 1.2f);
+			Invoke("stopBot", 1.7f);
+			Invoke("Punch", 1.8f);
+		}
+		else
+		{
+
+		}
+
 	}
 
-	private void stopPlayer()
+	private void Punch()
+	{
+		m_bot.Action_Punch();
+	}
+
+	private void stopBot()
 	{
 		m_bot.Action_StopMovement();
-		m_bot.Action_Jump();
-		Debug.Log("Stop Player");
 	}
+
+	private void MoveRight()
+	{
+		m_bot.Action_RunRight();
+	}
+
+	private void MoveLeft()
+	{
+		m_bot.Action_RunLeft();
+	}
+
+	private void Jump()
+	{
+		m_bot.Action_Jump();
+	}
+
 }

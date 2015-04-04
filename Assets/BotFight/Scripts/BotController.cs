@@ -5,7 +5,17 @@ public class BotController : MonoBehaviour {
 
 	#region Variables
 
+	public bool botDebug = false;
+
+	/// <summary>
+	/// Can the player move?
+	/// </summary>
 	public bool canMove = false;
+
+	/// <summary>
+	/// Can the player jump?
+	/// </summary>
+	public bool canJump = false;
 
 	//the animator component
 	private Animator _anim;
@@ -20,6 +30,11 @@ public class BotController : MonoBehaviour {
 	/// The speed of the player
 	/// </summary>
 	private Vector2 m_speed = new Vector2(8.0f, 0.0f);
+
+	/// <summary>
+	/// The height of the bots jump
+	/// </summary>
+	private Vector2 m_JumpHeight = new Vector2(0, 400.0f);
 
 	/// <summary>
 	/// Is this being played by a human?
@@ -38,6 +53,17 @@ public class BotController : MonoBehaviour {
 
 	#endregion
 
+	#region botDebug Variables
+
+	/// <summary>
+	/// The scroll position of the debug
+	/// </summary>
+	private Vector2 scrollPosition;
+
+	private string botDebugValue = "";
+
+	#endregion
+
 	#region General Methods
 
 	// Use this for initialization
@@ -47,6 +73,9 @@ public class BotController : MonoBehaviour {
 		_anim = GetComponent<Animator>();
 		//get the rigidbody attached to this player
 		_rigidPlayer = GetComponent<Rigidbody2D>();
+
+		DebugBot("Bot: " + gameObject.name + " initialized");
+
 	}
 
 	// Update is called once per frame
@@ -115,16 +144,18 @@ public class BotController : MonoBehaviour {
 			if(hit.transform.tag == "Ground")
 			{
 				_anim.SetBool("isGrounded", true);
-				_rigidPlayer.gravityScale = 1.0f;
+				canJump = true;
 			}
 			else
 			{
-				Debug.Log(hit.transform.name);
+				//Debug.Log(hit.transform.name);
+
 			}
 		}
 		else
 		{
 			_anim.SetBool("isGrounded", false);
+			canJump = false;
 		}
 	}
 
@@ -145,7 +176,7 @@ public class BotController : MonoBehaviour {
 	public void botStart()
 	{
 		canMove = true;
-		Debug.Log("Start bots!");
+		DebugBot("Start bots!");
 	}
 
 	public void Action_StopMovement()
@@ -159,9 +190,11 @@ public class BotController : MonoBehaviour {
 	/// </summary>
 	public void Action_Jump()
 	{
-		_rigidPlayer.AddForce(new Vector2(0, 300.0f));
-		_rigidPlayer.gravityScale = 2.0f;
-		Debug.Log("Jump!");
+		if(canJump)
+		{
+			_rigidPlayer.AddForce(m_JumpHeight);
+			DebugBot("Jump!");
+		}
 	}
 
 	/// <summary>
@@ -170,6 +203,7 @@ public class BotController : MonoBehaviour {
 	public void Action_Punch()
 	{
 		_anim.SetTrigger("Punch");
+		DebugBot("Punch");
 	}
 
 	/// <summary>
@@ -177,12 +211,15 @@ public class BotController : MonoBehaviour {
 	/// </summary>
 	public void Action_RunLeft()
 	{
+		DebugBot("Move Left");
 		_anim.SetFloat("Horizontal", 1.0f);
 		_rigidPlayer.velocity = -m_speed;
+		/*
 		if(!standing)
 		{
 			Action_ToggleFlipDirection();
 		}
+		*/
 	}
 
 	/// <summary>
@@ -190,12 +227,15 @@ public class BotController : MonoBehaviour {
 	/// </summary>
 	public void Action_RunRight()
 	{
+		DebugBot("Move Right");
 		_anim.SetFloat("Horizontal", 1.0f);
 		_rigidPlayer.velocity = m_speed;
+		/*
 		if(standing)
 		{
 			Action_ToggleFlipDirection();
 		}
+		*/
 	}
 
 	/// <summary>
@@ -208,7 +248,36 @@ public class BotController : MonoBehaviour {
 		Vector3 theScale = transform.localScale;
 		theScale.x *= -1;
 		transform.localScale = theScale;
+		DebugBot("Flip Bot");
+	}
 
+	#endregion
+
+	#region bot Debug
+
+
+	public void DebugBot(string _log)
+	{
+		botDebugValue += _log + "\n";
+	}
+
+	/// <summary>
+	/// Displays the Debug Values
+	/// </summary>
+	private void OnGUI()
+	{
+		if(botDebug)
+		{
+
+			GUILayout.BeginArea (new Rect(0, 0, 200, Screen.height));
+			scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+
+			botDebugValue = GUILayout.TextArea(botDebugValue, 2000);
+
+			GUILayout.EndScrollView();
+
+			GUILayout.EndArea();
+		}
 	}
 
 	#endregion
