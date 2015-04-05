@@ -636,11 +636,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 481136, guid: 1b9829521bbec96459874ea4075e3852, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1.78999996
+      value: -1.27999997
       objectReference: {fileID: 0}
     - target: {fileID: 481136, guid: 1b9829521bbec96459874ea4075e3852, type: 2}
       propertyPath: m_LocalPosition.y
-      value: .939999998
+      value: .280000001
       objectReference: {fileID: 0}
     - target: {fileID: 481136, guid: 1b9829521bbec96459874ea4075e3852, type: 2}
       propertyPath: m_LocalPosition.z
@@ -669,6 +669,14 @@ Prefab:
     - target: {fileID: 118016, guid: 1b9829521bbec96459874ea4075e3852, type: 2}
       propertyPath: m_Name
       value: Chris_Bro
+      objectReference: {fileID: 0}
+    - target: {fileID: 11442102, guid: 1b9829521bbec96459874ea4075e3852, type: 2}
+      propertyPath: Grenade
+      value: 
+      objectReference: {fileID: 169854, guid: b135c20299aca4e4097734d8afeaa101, type: 2}
+    - target: {fileID: 118016, guid: 1b9829521bbec96459874ea4075e3852, type: 2}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1b9829521bbec96459874ea4075e3852, type: 2}

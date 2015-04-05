@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
+using System;
 
 public class BotController : MonoBehaviour {
 
 	#region Variables
 
+	/// <summary>
+	/// Debug the Bot 
+	/// </summary>
 	public bool botDebug = false;
 
 	/// <summary>
@@ -50,6 +55,16 @@ public class BotController : MonoBehaviour {
 	/// The collision layers to hit
 	/// </summary>
 	public LayerMask m_collisionToHit;
+
+	/// <summary>
+	/// The grenade prefab
+	/// </summary>
+	public GameObject Grenade;
+
+	/// <summary>
+	/// Allows you to throw a grenade if set to true
+	/// </summary>
+	private bool canThrowGrenade = true;
 
 	#endregion
 
@@ -131,6 +146,8 @@ public class BotController : MonoBehaviour {
 
 	#endregion
 
+	#region Ground Check
+
 	/// <summary>
 	/// Check if the player is on the ground or not and play the appropriate animation
 	/// </summary>
@@ -159,16 +176,9 @@ public class BotController : MonoBehaviour {
 		}
 	}
 
-	#region Bot Actions
+	#endregion
 
-	/// <summary>
-	/// Can the Bot Move?
-	/// </summary>
-	/// <returns><c>true</c>, if bot can move, <c>false</c> otherwise.</returns>
-	public bool botCanMove()
-	{
-		return canMove;
-	}
+	#region Bot Actions
 
 	/// <summary>
 	/// Is called when the timer countdown ends; Allows player to move
@@ -179,10 +189,72 @@ public class BotController : MonoBehaviour {
 		DebugBot("Start bots!");
 	}
 
+
+	/// <summary>
+	/// Can the Bot Move?
+	/// </summary>
+	/// <returns><c>true</c>, if bot can move, <c>false</c> otherwise.</returns>
+	public bool botCanMove()
+	{
+		DebugBot("Bot Can Move");
+		return canMove;
+	}
+
+	#region Grenade Actions and Resets
+
+	public void Action_ThrowGrenade()
+	{
+		if(canThrowGrenade)
+		{
+			GameObject _grenade;
+			_grenade = Instantiate(Grenade, new Vector2(transform.position.x, transform.position.y + 1), Quaternion.identity) as GameObject;
+			_grenade.name = "Grenade";
+			canThrowGrenade = false;
+			DebugBot("Throwing Grenade!");
+			if(standing)
+			{
+				_grenade.GetComponent<Rigidbody2D>().AddForce(new Vector2(300.0f, 100.0f));
+			}
+			else
+			{
+				_grenade.GetComponent<Rigidbody2D>().AddForce(new Vector2(-300.0f, 100.0f));
+			}
+
+			Invoke("setGrenadeToTrue", 2.0f);
+
+		}
+		else
+		{
+			DebugBot("Cannot Throw Grenade");
+		}
+	}
+
+	/// <summary>
+	/// Sets the grenade to true.
+	/// </summary>
+	private void setGrenadeToTrue()
+	{
+		canThrowGrenade = true;
+		DebugBot("Resetting Grenade Counter");
+	}
+
+	/// <summary>
+	/// Checks to see if you can throw grenade
+	/// </summary>
+	/// <returns><c>true</c>, if can throw grenade was action_ed, <c>false</c> otherwise.</returns>
+	public bool Action_CanThrowGrenade()
+	{
+		DebugBot("Can Throw Grenade: " + canThrowGrenade);
+		return canThrowGrenade;
+	}
+
+	#endregion
+
 	public void Action_StopMovement()
 	{
 		_rigidPlayer.velocity = new Vector2(0,0);
 		_anim.SetFloat("Horizontal", 0.0f);
+		DebugBot("Stopping Movement");
 	}
 
 	/// <summary>
@@ -194,6 +266,10 @@ public class BotController : MonoBehaviour {
 		{
 			_rigidPlayer.AddForce(m_JumpHeight);
 			DebugBot("Jump!");
+		}
+		else
+		{
+			DebugBot("Can't Jump! Not on Ground!");
 		}
 	}
 
@@ -255,10 +331,13 @@ public class BotController : MonoBehaviour {
 
 	#region bot Debug
 
-
+	/// <summary>
+	/// Debugs the bot on screen with the GameObjects name
+	/// </summary>
+	/// <param name="_log">_log.</param>
 	public void DebugBot(string _log)
 	{
-		botDebugValue += _log + "\n";
+		botDebugValue += gameObject.name + ": " + _log + "\n";
 	}
 
 	/// <summary>
@@ -269,7 +348,7 @@ public class BotController : MonoBehaviour {
 		if(botDebug)
 		{
 
-			GUILayout.BeginArea (new Rect(0, 0, 200, Screen.height));
+			GUILayout.BeginArea (new Rect(0, 0, 300, Screen.height));
 			scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
 			botDebugValue = GUILayout.TextArea(botDebugValue, 2000);
@@ -278,6 +357,12 @@ public class BotController : MonoBehaviour {
 
 			GUILayout.EndArea();
 		}
+	}
+
+	private void OnDestroy()
+	{
+		File.WriteAllText(Application.dataPath + "/Logs/" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + DateTime.Now.Year + ".txt" , botDebugValue);
+		Debug.Log("Wrote Debug to File in Logs Folder");
 	}
 
 	#endregion

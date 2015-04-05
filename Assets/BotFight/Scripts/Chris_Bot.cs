@@ -27,22 +27,33 @@ public class Chris_Bot : MonoBehaviour {
 
 	private void startMoving()
 	{	
-		int _rand = Random.Range(0, 1);
+		m_bot.Action_ThrowGrenade();
+		m_bot.Action_ThrowGrenade();
+		Invoke("actionList", 0.5f);
 
-		if(_rand == 0)
-		{
-			MoveRight();
-			Invoke("stopBot", 0.5f);
-			Invoke("Jump", 0.6f);
-			Invoke("MoveRight", 1.2f);
-			Invoke("stopBot", 1.7f);
-			Invoke("Punch", 1.8f);
-		}
-		else
-		{
 
-		}
+	}
 
+	private void actionList()
+	{
+		MoveRight();
+		Invoke("stopBot", 0.5f);
+		Invoke("Jump", 0.6f);
+		Invoke("MoveRight", 1.2f);
+		Invoke("stopBot", 1.7f);
+		Invoke("Punch", 1.8f);
+		Invoke("throwGrenade", 2.0f);
+
+	}
+
+	private void destoryBot()
+	{
+		Destroy(this.gameObject);
+	}
+
+	private void throwGrenade()
+	{
+		m_bot.Action_ThrowGrenade();
 	}
 
 	private void Punch()

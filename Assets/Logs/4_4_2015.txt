@@ -1,0 +1,13 @@
+Chris_Bro: Bot: Chris_Bro initialized
+Chris_Bro: Start bots!
+Chris_Bro: Throwing Grenade!
+Chris_Bro: Cannot Throw Grenade
+Chris_Bro: Move Right
+Chris_Bro: Stopping Movement
+Chris_Bro: Jump!
+Chris_Bro: Move Right
+Chris_Bro: Resetting Grenade Counter
+Chris_Bro: Stopping Movement
+Chris_Bro: Punch
+Chris_Bro: Throwing Grenade!
+Chris_Bro: Resetting Grenade Counter
